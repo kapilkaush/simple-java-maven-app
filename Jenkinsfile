@@ -25,6 +25,8 @@ ARTIFACTORY_BASE = 'http://localhost:8081/artifactory'
 artifactory_build_link = ''
 artifactory_repo_link = ''
 
+def mvnHome = tool 'maven'
+
 pipeline {
     agent any
     tools {
@@ -76,7 +78,7 @@ pipeline {
 				)
 				rtMavenRun (
 				// Tool name from Jenkins configuration.
-    					tool: maven,
+    					tool: ${mvnHome}/bin/mvn,
     					pom: 'pom.xml',
     					goals: 'clean install',
     					// Maven options.
