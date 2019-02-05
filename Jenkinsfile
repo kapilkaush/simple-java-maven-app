@@ -52,7 +52,7 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
-	stage ('Artifactory & Xray') {
+	stage ('Artifactory') {
 
 			when {
 
@@ -61,44 +61,33 @@ pipeline {
 			}
 
 			steps {
+				rtMavenResolver (
+			    		id: 'resolver-unique-id',
+    					serverId: 'sagoon-art1',
+    					releaseRepo: 'libs-release",
+    					snapshotRepo: 'libs-snapshot"
+				)  
+ 
+				rtMavenDeployer (
+    					id: 'deployer-unique-id',
+    					serverId: 'sagoon-art1',
+    					releaseRepo: 'libs-release-local',
+    					snapshotRepo: "libs-snapshot-local"
+				)
+				rtMavenRun (
+				// Tool name from Jenkins configuration.
+    					tool: maven,
+    					pom: 'pom.xml',
+    					goals: 'clean install',
+    					// Maven options.
+    					//opts: '-Xms1024m -Xmx4096m',
+    					resolverId: 'resolver-unique-id'
+    					deployerId: 'deployer-unique-id',
+				)	
+				rtPublishBuildInfo (
+    					serverId: "Artifactory-1"
+				)
 
-				script {
-
-					//using 'artifacts-swn01' instead of 'artifacts' until xray problem is fixed for all nodes
-
-					def server = Artifactory.server('sagoon-art1')
-
-					def rtMaven = Artifactory.newMavenBuild()
-
-					def buildInfo = Artifactory.newBuildInfo()
-
-					buildInfo.env.capture = true
-
-					rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
-
-					rtMaven.deployer server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
-
-					rtMaven.run pom: 'pom.xml', goals: 'install -DskipTests', buildInfo: buildInfo
-
-					server.publishBuildInfo buildInfo
-
-					artifactory_build_link = "<li><a href='${ARTIFACTORY_BASE}/webapp/#/builds/${repoOrg}%20::%20${MVN_ARTIFACTID}%20::%20${env.BRANCH_NAME}/${env.BUILD_NUMBER}'>Artifactory Build Info</a></li>"
-
-					if (MVN_VERSION.contains('SNAPSHOT')) {
-
-						MVN_REPO = 'libs-snapshot'
-
-					} else {
-
-						MVN_REPO = 'libs-release'
-
-					}
-
-					REPO_SUB_DIR = MVN_GROUPID.replaceAll(/\./,'/')
-
-					artifactory_repo_link = "<li><a href='${ARTIFACTORY_BASE}/${MVN_REPO}/${REPO_SUB_DIR}/${MVN_ARTIFACTID}/${MVN_VERSION}'>Artifactory List View</a></li>"
-
-		}
             }
 	}
     }
