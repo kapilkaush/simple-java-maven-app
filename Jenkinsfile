@@ -15,6 +15,7 @@
 //}
 //}
 
+isPullRequest = "${env.BRANCH_NAME}".startsWith("PR")
 MVN_GROUPID = ''
 MVN_VERSION = ''
 MVN_ARTIFACTID = ''
