@@ -64,8 +64,8 @@ pipeline {
 				rtMavenResolver (
 			    		id: 'resolver-unique-id',
     					serverId: 'sagoon-art1',
-    					releaseRepo: 'libs-release",
-    					snapshotRepo: 'libs-snapshot"
+    					releaseRepo: 'libs-release',
+    					snapshotRepo: 'libs-snapshot'
 				)  
  
 				rtMavenDeployer (
