@@ -64,7 +64,19 @@ pipeline {
 			}
 
 			steps {
-				rtMavenResolver (
+				rtUpload (
+    				serverId: "sagoon-art1",
+    				spec:
+        			    """{
+          			      "files": [
+            				{				
+              				  "pattern": "target/*.jar",
+              				  "target": "libs-snapshot-local/com/sagoon/app/"
+            				}
+         			     ]
+        			    }"""
+				)
+/*				rtMavenResolver (
 			    		id: 'resolver-unique-id',
     					serverId: 'sagoon-art1',
     					releaseRepo: 'libs-release',
@@ -86,9 +98,9 @@ pipeline {
     					//opts: '-Xms1024m -Xmx4096m',
     					resolverId: 'resolver-unique-id',
     					deployerId: 'deployer-unique-id',
-				)	
+				) */	
 				rtPublishBuildInfo (
-    					serverId: "Artifactory-1"
+    					serverId: "sagoon-art1"
 				)
 
             }
