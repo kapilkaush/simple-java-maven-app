@@ -1,6 +1,6 @@
 // Powered by Infostretch 
 
-timestamps {
+/*timestamps {
 
 node () {
 
@@ -13,4 +13,31 @@ node () {
 // Unable to convert a build step referring to "org.jfrog.hudson.maven3.Maven3Builder". Please verify and convert manually if required. 
 	}
 }
+} */
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('Deliver') {
+            steps {
+                sh './jenkins/scripts/deliver.sh'
+            }
+        }
+    }
 }
