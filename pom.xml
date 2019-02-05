@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sagoon</groupId>
   <artifactId>sagoon-app</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <version>1.0-SNAPSHOT-${BUILD_NUMBER}</version>
   <name>sagoon-app</name>
   <url>http://maven.apache.org</url>
