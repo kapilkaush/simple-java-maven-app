@@ -81,7 +81,7 @@ pipeline {
     					goals: 'clean install',
     					// Maven options.
     					//opts: '-Xms1024m -Xmx4096m',
-    					resolverId: 'resolver-unique-id'
+    					resolverId: 'resolver-unique-id',
     					deployerId: 'deployer-unique-id',
 				)	
 				rtPublishBuildInfo (
