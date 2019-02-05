@@ -25,12 +25,13 @@ ARTIFACTORY_BASE = 'http://localhost:8081/artifactory'
 artifactory_build_link = ''
 artifactory_repo_link = ''
 
-M2_HOME = tool 'maven'
-
 pipeline {
     agent any
     tools {
         maven 'maven' 
+    }
+    environment {
+	M2_HOME = tool 'maven'
     }
     
     stages {
