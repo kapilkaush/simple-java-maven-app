@@ -15,6 +15,12 @@
 //}
 //}
 
+MVN_GROUPID = ''
+MVN_VERSION = ''
+MVN_ARTIFACTID = ''
+repoOrg = tokens[0]
+ARTIFACTORY_BASE = 'http://localhost:8081/artifactory'
+
 pipeline {
     agent any
     tools {
@@ -42,5 +48,54 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
+	stage ('Artifactory & Xray') {
+
+			when {
+
+				expression {isPullRequest == false}
+
+			}
+
+			steps {
+
+				script {
+
+					//using 'artifacts-swn01' instead of 'artifacts' until xray problem is fixed for all nodes
+
+					def server = Artifactory.server('sagoon-art1')
+
+					def rtMaven = Artifactory.newMavenBuild()
+
+					def buildInfo = Artifactory.newBuildInfo()
+
+					buildInfo.env.capture = true
+
+					rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+
+					rtMaven.deployer server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+
+					rtMaven.run pom: 'pom.xml', goals: 'install -DskipTests', buildInfo: buildInfo
+
+					server.publishBuildInfo buildInfo
+
+					artifactory_build_link = "<li><a href='${ARTIFACTORY_BASE}/webapp/#/builds/${repoOrg}%20::%20${MVN_ARTIFACTID}%20::%20${env.BRANCH_NAME}/${env.BUILD_NUMBER}'>Artifactory Build Info</a></li>"
+
+					if (MVN_VERSION.contains('SNAPSHOT')) {
+
+						MVN_REPO = 'libs-snapshot'
+
+					} else {
+
+						MVN_REPO = 'libs-release'
+
+					}
+
+					REPO_SUB_DIR = MVN_GROUPID.replaceAll(/\./,'/')
+
+					artifactory_repo_link = "<li><a href='${ARTIFACTORY_BASE}/${MVN_REPO}/${REPO_SUB_DIR}/${MVN_ARTIFACTID}/${MVN_VERSION}'>Artifactory List View</a></li>"
+
+		}
+            }
+	}
     }
 }
