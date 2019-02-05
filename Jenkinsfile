@@ -70,7 +70,7 @@ pipeline {
         			    """{
           			      "files": [
             				{				
-              				  "pattern": "target/*.jar",
+              				  "pattern": "target/*.war",
               				  "target": "libs-snapshot-local/com/sagoon/app/"
             				}
          			     ]
