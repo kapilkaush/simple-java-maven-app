@@ -22,6 +22,8 @@ MVN_ARTIFACTID = ''
 tokens = "${env.JOB_NAME}".tokenize('/')
 repoOrg = tokens[0]
 ARTIFACTORY_BASE = 'http://localhost:8081/artifactory'
+artifactory_build_link = ''
+artifactory_repo_link = ''
 
 pipeline {
     agent any
